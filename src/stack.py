@@ -1,3 +1,4 @@
+import time
 from sense_hat import SenseHat
 
 BLOCK_COLOR = (116, 248, 252)
@@ -22,14 +23,22 @@ class Stack():
         '''
         Play a new game
         '''
-        self.draw_line(0, 3, 3)
-        self.draw_line(1, 2, 0)
-        self.draw_line(2, 3, -2)
-        self.draw_line(3, 3, 7)
+        direction = 1
+        offset = -2
+        while self.active:
+            self.draw_line(0, 3, offset)
+            if offset == GRID_SIZE - 1:
+                direction = -1
+            elif offset == -2:
+                direction = 1
+            offset = offset + direction
+            time.sleep(0.2)
 
     def __init__(self):
         self.sense = SenseHat()
         self.sense.set_rotation(180)
+        self.active_row = 0
+        self.active = True
         # reset the board
         board = [BG_COLOR for x in range(GRID_SIZE * GRID_SIZE)]
         self.sense.set_pixels(board)
