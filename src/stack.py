@@ -27,6 +27,15 @@ class Stack():
 
         print('stop button pressed')
 
+        self.current_bar = [self.offset, self.bar_width]
+        if self.active_row > 0 and \
+            ( self.current_bar[0] < self.valid_bar[0] or \
+              self.current_bar[1] > self.valid_bar[1]):
+            self.active = False
+            print('Game Over')
+            return
+
+        self.valid_bar = self.current_bar
         self.current_speed = self.current_speed * 0.90
         self.active_row = self.active_row + 1
 
@@ -41,15 +50,13 @@ class Stack():
         '''
         Play a new game
         '''
-        direction = 1
-        offset = -2
         while self.active:
-            self.draw_line(self.active_row, self.bar_width, offset)
-            if offset == GRID_SIZE - 1:
-                direction = -1
-            elif offset == -2:
-                direction = 1
-            offset = offset + direction
+            self.draw_line(self.active_row, self.bar_width, self.offset)
+            if self.offset == GRID_SIZE - 1:
+                self.direction = -1
+            elif self.offset == -2:
+                self.direction = 1
+            self.offset = self.offset + self.direction
             time.sleep(self.current_speed)
 
     def __init__(self):
@@ -60,6 +67,9 @@ class Stack():
         self.bar_width = 3
         self.active = True
         self.current_speed = INITIAL_SPEED
+        self.valid_bar = [0,GRID_SIZE-1]
+        self.direction = 1
+        self.offset = -2
         # reset the board
         board = [BG_COLOR for x in range(GRID_SIZE * GRID_SIZE)]
         self.sense.set_pixels(board)
